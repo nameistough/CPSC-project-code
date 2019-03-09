@@ -1,3 +1,5 @@
+
+
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -5,19 +7,88 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 
-public class GUI extends Application implements EventHandler<ActionEvent> {
+public class Main extends Application {
     private final int SIZE = 25;
-    Scene firstScene, secondScene, thirdScene;
     private Stage window;
+    Scene firstScene, secondScene, thirdScene, fourthScene;
     private TextField nameInput;
-    private Button easy, medium, difficult, goBack;
+    private Button easy, medium, difficult, goBack, enterButton, unlockArt, pointBalance, backToMain;
+    private Minesweeper myGame;
+    private GridPane board;
+
+    public class GameHandle implements EventHandler<ActionEvent> {
+
+        @Override
+        public void handle(ActionEvent actionEvent){
+            if ((Button) actionEvent.getSource() == easy) {
+                window.setScene(thirdScene);
+            }
+            else if ((Button) actionEvent.getSource() == medium ){
+                window.setScene(thirdScene);
+            }
+
+            else if ((Button) actionEvent.getSource() == difficult){
+                window.setScene(thirdScene);
+            }
+
+            else if ((Button) actionEvent.getSource() == goBack){
+                window.setScene(firstScene);
+            }
+
+            else if ((Button) actionEvent.getSource() == goBack){
+                window.setScene(firstScene);
+            }
+
+            else if ((Button) actionEvent.getSource() == enterButton) {
+                window.setScene(secondScene);
+                nameInput.setText("");
+            }
+
+            else if ((Button) actionEvent.getSource() == backToMain) {
+                window.setScene(secondScene);
+                nameInput.setText("");
+            }
+
+            else {
+                Label item = new Label("1");
+                int idx = board.getChildren().indexOf(actionEvent.getSource());
+                System.out.println(idx);
+            }
+        }
+    }
+
+
+
+
     @Override
     public void start(Stage primaryStage) throws Exception{
         this.window = primaryStage;
+
+        // Create Store menu
+        VBox storeOptions = new VBox();
+        Label titleStore = new Label("Game Store");
+        unlockArt = new Button("Unlock Art");
+        pointBalance = new Button("Point Balance");
+        backToMain = new Button("Back"); // Repetition of code. Code reviewers please fix
+        storeOptions.getChildren().addAll(titleStore, unlockArt, pointBalance, backToMain);
+        unlockArt.setOnAction(new GameHandle());
+        pointBalance.setOnAction(new GameHandle());
+        backToMain.setOnAction(new GameHandle());
+        storeOptions.setSpacing(2.0);
+        fourthScene = new Scene(storeOptions, 350, 150);
+
+
+
+
+
+
 
         // Game Board
         BorderPane gameBoard = new BorderPane();
@@ -32,16 +103,19 @@ public class GUI extends Application implements EventHandler<ActionEvent> {
 
 
         // Create the actual board:
-        GridPane board = new GridPane();
+        board = new GridPane();
         for (int i = 0; i < SIZE; i++){
             for (int j = 0; j < SIZE; j++){
-                board.add(new Button("1"), i, j);
+                Button btts = new Button();
+                board.add(btts, i, j);
+                btts.setOnAction(new GameHandle());
             }
         }
 
+
         gameBoard.setTop(top);
         gameBoard.setCenter(board);
-        window.setTitle("Hello World");
+        window.setTitle("Minesweeper");
         thirdScene = new Scene(gameBoard, SIZE*SIZE + 50, SIZE*SIZE + 50);
 
         ///////////////////////////////////////////////////////////////////////////////
@@ -50,46 +124,49 @@ public class GUI extends Application implements EventHandler<ActionEvent> {
         items.setSpacing(2.0);
         Label title = new Label("Settings");
         Label choice = new Label("Choose the Level of Difficulty");
-        Button easy = new Button("Easy");
-        Button medium = new Button("Medium");
-        Button difficult = new Button("Difficult");
-        Button goBack = new Button("Back");
-
+        easy = new Button("Easy");
+        medium = new Button("Medium");
+        difficult = new Button("Difficult");
+        goBack = new Button("Back");
         // Set the functionality of the buttons
-        easy.setOnAction(e -> window.setScene(thirdScene));
-        medium.setOnAction(e -> window.setScene(thirdScene));
-        difficult.setOnAction(e -> window.setScene(thirdScene));
-        goBack.setOnAction(e -> window.setScene(firstScene));
-
         items.getChildren().addAll(title, choice, easy, medium, difficult, goBack);
+        easy.setOnAction(new GameHandle());
+        medium.setOnAction(new GameHandle());
+        difficult.setOnAction(new GameHandle());
+        goBack.setOnAction(new GameHandle());
+
+
         settings.setCenter(items);
         secondScene = new Scene(settings, 200, 200);
 
         //////////////////////////////////////////////////////////////////////////////
         BorderPane input = new BorderPane();
-        Label welcome = new Label("Welcome to Minesweepr");
+        Label welcome = new Label("Welcome to Minesweeper");
 
         HBox info = new HBox();
         info.setSpacing(5.0);
         Label nameLabel = new Label("Please enter player name:");
         nameInput = new TextField();
-        nameInput.setOnAction(e-> window.setScene(secondScene));
+        VBox infoProcess = new VBox(); // Receives the user's input
+        enterButton = new Button("Enter");
+        enterButton.setOnAction(new GameHandle());
+        infoProcess.getChildren().add(enterButton);
         info.getChildren().addAll(nameLabel, nameInput);
         input.setTop(welcome);
         input.setCenter(info);
+        input.setBottom(infoProcess);
 
         // Initialize Scene
-        firstScene = new Scene(input, 350, 50);
+        firstScene = new Scene(input, 350, 100);
         window.setScene(firstScene);
         window.show();
-    }
-
-    @Override
-    public void handle(ActionEvent actionEvent) {
 
     }
+
 
     public static void main(String[] args) {
         launch(args);
     }
+
+
 }
