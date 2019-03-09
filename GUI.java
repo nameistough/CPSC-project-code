@@ -14,7 +14,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 
-public class Main extends Application {
+public class GUI extends Application {
     private final int SIZE = 25;
     private Stage window;
     Scene firstScene, secondScene, thirdScene, fourthScene;
